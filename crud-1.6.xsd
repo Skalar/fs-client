@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  xmlns="http://fsws.usit.no/schemas/crud" 
+  xmlns:swaRef="http://ws-i.org/profiles/basic/1.1/xsd"
+  targetNamespace="http://fsws.usit.no/schemas/crud" 
+  elementFormDefault="qualified">
+  <xsd:import namespace="http://ws-i.org/profiles/basic/1.1/xsd"
+				schemaLocation="http://ws-i.org/profiles/basic/1.1/swaref.xsd" />
+    <xsd:annotation>
+        <xsd:documentation>
+          Versjon 1.6
+        </xsd:documentation>
+        <xsd:documentation>
+          Skjemaet brukes av web-tjenesten CRUD, som tilbyr innsetting, sletting og uthenting av elementer
+          fra tabellene Person, Soknad, SoknadsAlternativ, Student, Vurdkombmelding, Undervisningsmelding,
+          Studieprogramstudent, KullKlasseStudent og StudentVurdKombProtokoll. Tjenesten tilbyr tre operasjoner
+          doUpsert, doSelect og doSelectMany, som alle tar en innparameter på XML-format, og leverer også
+          alle utdata på XML-format.
+        </xsd:documentation>
+        <xsd:documentation>
+          Skjemaet kunne vært strammet ytterligere inn. Tekstkolonner er stort sett ikke begrenset, selv om
+          det for mange av disse godtas kun visse koder i FS-basen. Man kunne også spesifisert at parameteren
+          til doUpsert og doSelect må gi verdier for samtlige primaernøkkelkolonner.
+        </xsd:documentation>
+        <xsd:documentation>
+          Noen tabeller/kolonner kan kun avleses. Dette gjelder:
+          - Tabell  StudentVurdKombProtokoll
+          - Kolonne Student.Studentnr_Tildelt
+        </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleType name="FodselsdatoType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[0-9][0-9][0-9][0-9][0-9]([0-9]?)"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="PersonnrType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[0-9][0-9][0-9][0-9][0-9]"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="KjonnType">
+      <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="M"/>
+          <xsd:enumeration value="K"/>
+          <xsd:enumeration value=""/>
+      </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="AarstallType">
+      <xsd:restriction base="xsd:string">
+          <xsd:pattern value="([0-9]{4})|()?"/>
+      </xsd:restriction>       
+    </xsd:simpleType>
+    <xsd:simpleType name="TerminnrType">
+      <xsd:restriction base="xsd:string">
+          <xsd:pattern value="([0-9]{2})|()?"/>
+      </xsd:restriction>       
+    </xsd:simpleType>
+    <xsd:simpleType name="VarighetTallType">
+      <xsd:restriction base="xsd:string">
+          <xsd:pattern value="([0-9]{6})|()?"/>
+      </xsd:restriction>       
+    </xsd:simpleType>
+    <xsd:simpleType name="PostnrType">
+      <xsd:restriction base="xsd:string">
+          <xsd:pattern value="([0-9]{3}([0-9]?))|()?"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="LopenrType">
+      <xsd:restriction base="xsd:string">
+          <xsd:pattern value="([0-9]{3})|()?"/>
+      </xsd:restriction>       
+    </xsd:simpleType>
+    <xsd:simpleType name="LandnrType">
+      <xsd:restriction base="xsd:string">
+          <xsd:pattern value="([0-9]?)([0-9]?)([0-9]?)"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="InstitusjonsnrType">
+      <xsd:restriction base="xsd:string">
+          <xsd:pattern value="([0-9]{3})|()?"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="FaknrType">
+      <xsd:restriction base="xsd:string">
+          <xsd:pattern value="([0-9]{2})|()?"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="InstituttnrType">
+      <xsd:restriction base="xsd:string">
+          <xsd:pattern value="([0-9]{2})|()?"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="GruppenrType">
+      <xsd:restriction base="xsd:string">
+          <xsd:pattern value="([0-9]{2})|()?"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="StudietypenrType">
+      <xsd:restriction base="xsd:string">
+          <xsd:pattern value="([0-9]{3})|()?"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="RolleprioritetType">
+      <xsd:restriction base="xsd:string">
+          <xsd:pattern value="([0-9]{3})|()?"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="RollenrType">
+      <xsd:restriction base="xsd:string">
+          <xsd:pattern value="([0-9]{4})|()?"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="PrioritetsnrType">
+      <xsd:restriction base="xsd:string">
+          <xsd:pattern value="([0-9]([0-9]?))|()?"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="DatoType">
+      <xsd:annotation>
+        <xsd:documentation>
+          Datoformatet for DATE-kolonner er ÅÅÅÅ-MM-DD.
+          Datoformatet gjelder ikke fødselsdato, se FodselsdatoType.
+        </xsd:documentation>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+        <xsd:pattern value="([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9])|()?"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="PersonType">
+        <xsd:sequence>
+            <xsd:element name="Fodselsdato" type="FodselsdatoType" minOccurs="0"/>
+            <xsd:element name="Personnr" type="PersonnrType" minOccurs="0"/>
+            <xsd:element name="Kjonn" type="KjonnType" minOccurs="0"/>
+            <xsd:element name="Etternavn" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Fornavn" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Landnr_Hjemland" type="LandnrType" minOccurs="0"/>
+            <xsd:element name="Adrlin1_Hjemsted" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Adrlin2_Hjemsted" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Adrlin3_Hjemsted" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Adresseland_Hjemsted" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Postnr_Hjemsted" type="PostnrType" minOccurs="0"/>
+            <xsd:element name="Emailadresse_Privat" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Telefonnr_Hjemsted" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Telefonnr_Mobil" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Studentgrunnlagkode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Emailadresse" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Status_Dod" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Brukernavn" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="SoknadType">
+        <xsd:sequence>
+            <xsd:element name="Fodselsdato" type="FodselsdatoType" minOccurs="0"/>
+            <xsd:element name="Personnr" type="PersonnrType" minOccurs="0"/>
+            <xsd:element name="Opptakstypekode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Terminkode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Arstall" type="AarstallType" minOccurs="0"/>
+			<xsd:element name="Regnr" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Opptorgankode_B_Rolle" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="SoknadsAlternativType">
+        <xsd:sequence>
+            <xsd:element name="Fodselsdato" type="FodselsdatoType" minOccurs="0"/>
+            <xsd:element name="Personnr" type="PersonnrType" minOccurs="0"/>
+            <xsd:element name="Opptakstypekode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Terminkode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Arstall" type="AarstallType" minOccurs="0"/>
+            <xsd:element name="Institusjonsnr" type="InstitusjonsnrType" minOccurs="0"/>
+            <xsd:element name="Studietypenr" type="StudietypenrType" minOccurs="0"/>
+            <xsd:element name="Prioritetsnr" type="PrioritetsnrType" minOccurs="0"/>
+            <xsd:element name="Opptorgankode_Saksbeh" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Opptorgankode_Tilbudsgiver" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="StudentType">
+        <xsd:sequence>
+            <xsd:element name="Fodselsdato" type="FodselsdatoType" minOccurs="0"/>
+            <xsd:element name="Personnr" type="PersonnrType" minOccurs="0"/>
+            <xsd:element name="Telefonnr_Arbeid" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Adrlin1_Arbeid" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Adrlin2_Arbeid" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Postnr_Arbeid" type="PostnrType" minOccurs="0"/>
+            <xsd:element name="Adrlin3_Arbeid" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Adresseland_Arbeid" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Telefonnr_Semtelefon" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="TelefonLandnr_Semtelefon" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="TelefonRetnnr_Semtelefon" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Adrlin1_Semadr" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Adrlin2_Semadr" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Postnr_Semadr" type="PostnrType" minOccurs="0"/>
+            <xsd:element name="Adrlin3_Semadr" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Adresseland_Semadr" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Fichekode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Studentnr_Tildelt" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="VurdkombmeldingType">
+        <xsd:sequence>
+            <xsd:element name="Fodselsdato" type="FodselsdatoType" minOccurs="0"/>
+            <xsd:element name="Personnr" type="PersonnrType" minOccurs="0"/>
+            <xsd:element name="Institusjonsnr" type="InstitusjonsnrType" minOccurs="0"/>
+            <xsd:element name="Emnekode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Versjonskode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Vurdkombkode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Arstall" type="AarstallType" minOccurs="0"/>
+            <xsd:element name="Vurdtidkode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Terminkode_Meld_Foretatt" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Arstall_Meld_Foretatt" type="AarstallType" minOccurs="0"/>
+            <xsd:element name="Studieprogramkode" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="UndervisningsmeldingType">
+        <xsd:sequence>
+            <xsd:element name="Fodselsdato" type="FodselsdatoType" minOccurs="0"/>
+            <xsd:element name="Personnr" type="PersonnrType" minOccurs="0"/>
+            <xsd:element name="Institusjonsnr" type="InstitusjonsnrType" minOccurs="0"/>
+            <xsd:element name="Emnekode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Versjonskode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Terminkode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Arstall" type="AarstallType" minOccurs="0"/>
+            <xsd:element name="Terminnr" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Tilbudstatkode" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="StudieprogramstudentType">
+        <xsd:sequence>
+            <xsd:element name="Fodselsdato" type="FodselsdatoType" minOccurs="0"/>
+            <xsd:element name="Personnr" type="PersonnrType" minOccurs="0"/>
+            <xsd:element name="Studieprogramkode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Terminkode_Start" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Arstall_Start" type="AarstallType" minOccurs="0"/>
+            <xsd:element name="Terminkode_Kull" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Arstall_Kull" type="AarstallType" minOccurs="0"/>
+            <xsd:element name="Studierettstatkode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Dato_Studierett_Tildelt" type="DatoType" minOccurs="0"/>
+            <xsd:element name="Status_Sperr_Aut_Oppd" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Dato_Studierett_Gyldig_Til" type="DatoType" minOccurs="0"/>
+            <xsd:element name="StudentStatKode" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="KullKlasseStudentType">
+        <xsd:sequence>
+            <xsd:element name="Fodselsdato" type="FodselsdatoType" minOccurs="0"/>
+            <xsd:element name="Personnr" type="PersonnrType" minOccurs="0"/>
+            <xsd:element name="Studieprogramkode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Terminkode_Start" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Arstall_Start" type="AarstallType" minOccurs="0"/>
+            <xsd:element name="Terminkode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Arstall" type="AarstallType" minOccurs="0"/>
+            <xsd:element name="Klassekode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Status_Aktiv" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="StudentVurdKombProtokollType">
+        <xsd:sequence>
+            <xsd:element name="Fodselsdato" type="FodselsdatoType" minOccurs="0"/>
+            <xsd:element name="Personnr" type="PersonnrType" minOccurs="0"/>
+            <xsd:element name="Institusjonsnr" type="InstitusjonsnrType" minOccurs="0"/>
+            <xsd:element name="Emnekode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Versjonskode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="VurdKombKode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Arstall" type="AarstallType" minOccurs="0"/>
+            <xsd:element name="VurdTidKode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Karaktertall" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="EmneType">
+        <xsd:sequence>
+            <xsd:element name="Institusjonsnr" type="InstitusjonsnrType" minOccurs="0"/>
+            <xsd:element name="Emnekode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Versjonskode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Emnenavnfork" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Emnenavn_Bokmal" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Institusjonsnr_Reglement" type="InstitusjonsnrType" minOccurs="0"/>
+            <xsd:element name="Faknr_Reglement" type="FaknrType" minOccurs="0"/>
+            <xsd:element name="Instituttnr_Reglement" type="InstituttnrType" minOccurs="0"/>
+            <xsd:element name="Gruppenr_Reglement" type="GruppenrType" minOccurs="0"/>
+            <xsd:element name="Institusjonsnr_Kontroll" type="InstitusjonsnrType" minOccurs="0"/>
+            <xsd:element name="Faknr_Kontroll" type="FaknrType" minOccurs="0"/>
+            <xsd:element name="Instituttnr_Kontroll" type="InstituttnrType" minOccurs="0"/>
+            <xsd:element name="Gruppenr_Kontroll" type="GruppenrType" minOccurs="0"/>
+            <xsd:element name="Terminkode_Und_Forste" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Arstall_Und_Forste" type="AarstallType" minOccurs="0"/>
+            <xsd:element name="Terminkode_Und_Siste" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Arstall_Und_Siste" type="AarstallType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="StudieprogramType">
+    	<xsd:sequence>
+    		<xsd:element name="Studieprogramkode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Studieprognavn" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Kodeverditype" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Institusjonsnr_Studieansv" type="InstitusjonsnrType" minOccurs="0"/>
+    		<xsd:element name="Faknr_Studieansv" type="FaknrType" minOccurs="0"/>
+    		<xsd:element name="Instituttnr_Studieansv" type="InstituttnrType" minOccurs="0"/>
+    		<xsd:element name="Gruppenr_Studieansv" type="GruppenrType" minOccurs="0"/>
+    		<xsd:element name="Status_Utgatt" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Terminkode_Siste_opptak" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Arstall_siste_opptak" type="AarstallType" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="UndaktivitetType">
+    	<xsd:sequence>
+    		<xsd:element name="Institusjonsnr" type="InstitusjonsnrType" minOccurs="0"/>
+    		<xsd:element name="Emnekode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Versjonskode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Terminkode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Arstall" type="AarstallType" minOccurs="0"/>
+    		<xsd:element name="Terminnr" type="TerminnrType" minOccurs="0"/>
+    		<xsd:element name="Aktivitetkode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Undpartilopenr" type="LopenrType" minOccurs="0"/>
+    		<xsd:element name="Personnr_Fagansvarlig" type="PersonnrType" minOccurs="0"/>
+    		<xsd:element name="Fodselsdato_Fagansvarlig" type="FodselsdatoType" minOccurs="0"/>
+    		<xsd:element name="Tidsenhet_Varighet" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Tall_Varighet" type="VarighetTallType" minOccurs="0"/>
+    		<xsd:element name="Aktivitetsnavn" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Institusjonsnr_Undsted" type="InstitusjonsnrType" minOccurs="0"/>
+    		<xsd:element name="Faknr_Undsted" type="FaknrType" minOccurs="0"/>
+    		<xsd:element name="Instituttnr_Undsted" type="InstituttnrType" minOccurs="0"/>
+    		<xsd:element name="Gruppenr_Undsted" type="GruppenrType" minOccurs="0"/>
+    		<xsd:element name="Aktivitetkode_Eier" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Status_Eksport_Tplan" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Studieprogramkode_Kull" type="xsd:string" minOccurs="0" />
+    		<xsd:element name="Arstall_Kull" type="xsd:string" minOccurs="0" />
+    		<xsd:element name="Terminkode_Kull" type="xsd:string" minOccurs="0" />
+    		<xsd:element name="Klassekode_Kull" type="xsd:string" minOccurs="0" />
+    	</xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="UndervisningsenhetType">
+    	<xsd:sequence>
+    		<xsd:element name="Institusjonsnr" type="InstitusjonsnrType" minOccurs="0"/>
+    		<xsd:element name="Emnekode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Versjonskode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Terminkode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Arstall" type="AarstallType" minOccurs="0"/>
+    		<xsd:element name="Terminnr" type="TerminnrType" minOccurs="0"/>
+    		<xsd:element name="Emnekode_Felles" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Versjonskode_Felles" type="xsd:string" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="FagpersonType">
+    	<xsd:sequence>
+    		<xsd:element name="Fodselsdato" type="FodselsdatoType" minOccurs="0"/>
+    		<xsd:element name="Personnr" type="PersonnrType" minOccurs="0"/>
+    		<xsd:element name="Fagfelt" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Stillingstittel_Engelsk" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Institusjonsnr_Ansatt" type="InstitusjonsnrType" minOccurs="0"/>
+    		<xsd:element name="Faknr_Ansatt" type="FaknrType" minOccurs="0"/>
+    		<xsd:element name="Instituttnr_Ansatt" type="InstituttnrType" minOccurs="0"/>
+    		<xsd:element name="Gruppenr_Ansatt" type="GruppenrType" minOccurs="0"/>
+    		<xsd:element name="Stillingstittel_Norsk" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Lonnsavtalekode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Merknadtekst" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Status_Aktiv" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Fagpersonstatkode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Status_Permisjon" type="xsd:string" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="KullType">
+    	<xsd:sequence>
+    		<xsd:element name="Studieprogramkode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Terminkode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Arstall" type="AarstallType" minOccurs="0"/>
+    		<xsd:element name="Studiekullnavn" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Studiekullnavn_Engelsk" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Status_Automatisk_Opprykk" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Status_Aktiv" type="xsd:string" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="KullKlasseType">
+    	<xsd:sequence>
+    		<xsd:element name="Studieprogramkode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Terminkode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Arstall" type="AarstallType" minOccurs="0"/>
+    		<xsd:element name="Klassekode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Klassenavn" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Institusjonsnr_Studiested" type="InstitusjonsnrType" minOccurs="0"/>
+    		<xsd:element name="Faknr_Studiested" type="FaknrType" minOccurs="0"/>
+    		<xsd:element name="Instituttnr_Studiested" type="InstituttnrType" minOccurs="0"/>
+    		<xsd:element name="Gruppenr_Studiested" type="GruppenrType" minOccurs="0"/>
+    		<xsd:element name="Status_Aktiv" type="xsd:string" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="RomType">
+    	<xsd:sequence>
+    		<xsd:element name="Romkode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Bygningskode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Romnavn" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Romtypekode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Tall_Kapasitet_Eks" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Tall_Kapasitet_Und" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Institusjonsnr_Administrerer" type="InstitusjonsnrType" minOccurs="0"/>
+    		<xsd:element name="Faknr_Administrerer" type="FaknrType" minOccurs="0"/>
+    		<xsd:element name="Instituttnr_Administrerer" type="InstituttnrType" minOccurs="0"/>
+    		<xsd:element name="Gruppenr_Administrerer" type="GruppenrType" minOccurs="0"/>
+    		<xsd:element name="Status_Aktiv" type="xsd:string" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="StedType">
+    	<xsd:sequence>
+    		<xsd:element name="Status_Aktiv" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Institusjonsnr" type="InstitusjonsnrType" minOccurs="0"/>
+    		<xsd:element name="Faknr" type="FaknrType" minOccurs="0"/>
+    		<xsd:element name="Instituttnr" type="InstituttnrType" minOccurs="0"/>
+    		<xsd:element name="Gruppenr" type="GruppenrType" minOccurs="0"/>
+    		<xsd:element name="Stedakronym" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Stednavn_Bokmal" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Orgnivakode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Institusjonsnr_Org_Under" type="InstitusjonsnrType" minOccurs="0"/>
+    		<xsd:element name="Faknr_Org_Under" type="FaknrType" minOccurs="0"/>
+    		<xsd:element name="Instituttnr_Org_Under" type="InstituttnrType" minOccurs="0"/>
+    		<xsd:element name="Gruppenr_Org_Under" type="GruppenrType" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="PersonrolleType">
+    	<xsd:sequence>
+    		<xsd:element name="Fodselsdato" type="FodselsdatoType" minOccurs="0"/>
+    		<xsd:element name="Personnr" type="PersonnrType" minOccurs="0"/>
+    		<xsd:element name="Rollenr" type="RollenrType" minOccurs="0"/>
+    		<xsd:element name="Rollekode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Dato_Fra" type="DatoType" minOccurs="0"/>
+    		<xsd:element name="Dato_Til" type="DatoType" minOccurs="0"/>
+    		<xsd:element name="Institusjonsnr" type="InstitusjonsnrType" minOccurs="0"/>
+    		<xsd:element name="Faknr" type="FaknrType" minOccurs="0"/>
+    		<xsd:element name="Instituttnr" type="InstituttnrType" minOccurs="0"/>
+    		<xsd:element name="Gruppenr" type="GruppenrType" minOccurs="0"/>
+    		<xsd:element name="Studieprogramkode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Emnekode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Versjonskode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Aktivitetkode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Terminkode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Arstall" type="AarstallType" minOccurs="0"/>
+    		<xsd:element name="Terminnr" type="TerminnrType" minOccurs="0"/>
+    		<xsd:element name="Etterutdkurskode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Kurstidsangivelsekode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Saksbehinit_Opprettet" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Dato_Opprettet" type="DatoType" minOccurs="0"/>
+    		<xsd:element name="Saksbehinit_Endring" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Dato_Endring" type="DatoType" minOccurs="0"/>
+    		<xsd:element name="Merknadtekst" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Prioritetsnr" type="RolleprioritetType" minOccurs="0"/>
+    		<xsd:element name="Klassekode" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Status_Publisering" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Status_Default_Veileder" type="xsd:string" minOccurs="0"/>
+    		<xsd:element name="Undplanlopenr" type="LopenrType" minOccurs="0"/>
+    		<xsd:element name="Institusjonsnr_Eier" type="InstitusjonsnrType" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    <!-- 
+    <xsd:complexType name="">
+    	<xsd:sequence>
+    		<xsd:element name="" type="xsd:string" minOccurs="0"/>
+    	</xsd:sequence>
+    </xsd:complexType>
+    -->
+    <xsd:group name="CrudGroup">
+        <xsd:choice>
+            <xsd:element name="Person" type="PersonType"/>
+            <xsd:element name="Soknad" type="SoknadType"/>
+            <xsd:element name="SoknadsAlternativ" type="SoknadsAlternativType"/>
+            <xsd:element name="Student" type="StudentType"/>
+            <xsd:element name="Vurdkombmelding" type="VurdkombmeldingType"/>
+            <xsd:element name="Undervisningsmelding" type="UndervisningsmeldingType"/>
+            <xsd:element name="Studieprogramstudent" type="StudieprogramstudentType"/>
+            <xsd:element name="KullKlasseStudent" type="KullKlasseStudentType"/>
+            <xsd:element name="StudentVurdKombProtokoll" type="StudentVurdKombProtokollType"/>
+            <xsd:element name="Emne" type="EmneType" />
+            <xsd:element name="Studieprogram" type="StudieprogramType" />
+            <xsd:element name="Undaktivitet" type="UndaktivitetType" />
+            <xsd:element name="Undervisningsenhet" type="UndervisningsenhetType" />
+            <xsd:element name="Fagperson" type="FagpersonType" />
+            <xsd:element name="Kull" type="KullType" />
+            <xsd:element name="KullKlasse" type="KullKlasseType" />
+            <xsd:element name="Rom" type="RomType" />
+            <xsd:element name="Sted" type="StedType" />
+            <xsd:element name="Personrolle" type="PersonrolleType" />
+        </xsd:choice>
+    </xsd:group>
+    <xsd:complexType name="CrudManyType">
+        <xsd:choice>
+            <xsd:element name="Person" type="PersonType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Soknad" type="SoknadType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="SoknadsAlternativ" type="SoknadsAlternativType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Student" type="StudentType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Vurdkombmelding" type="VurdkombmeldingType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Undervisningsmelding" type="UndervisningsmeldingType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Studieprogramstudent" type="StudieprogramstudentType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="KullKlasseStudent" type="KullKlasseStudentType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="StudentVurdKombProtokoll" type="StudentVurdKombProtokollType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Emne" type="EmneType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Studieprogram" type="StudieprogramType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Undaktivitet" type="UndaktivitetType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Undervisningsenhet" type="UndervisningsenhetType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Fagperson" type="FagpersonType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Kull" type="KullType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="KullKlasse" type="KullKlasseType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Rom" type="RomType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Sted" type="StedType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Personrolle" type="PersonrolleType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:choice>
+    </xsd:complexType>
+    <xsd:complexType name="StatusType">
+        <xsd:sequence>
+            <xsd:element name="Kode" type="xsd:int"/>
+            <xsd:element name="Melding" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CrudParamType">
+        <xsd:group ref="CrudGroup"/>
+    </xsd:complexType>
+    <xsd:complexType name="fswsAttachment">
+        	<xsd:sequence>
+        		<xsd:element form="unqualified" minOccurs="0" name="dataHandler" type="swaRef:swaRef"/>
+        	</xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="doUpsertRequest" type="CrudParamType"/>
+    <xsd:element name="doUpsertResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Status" type="StatusType"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="doSelectRequest" type="CrudParamType"/>
+    <xsd:element name="doSelectResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Status" type="StatusType"/>
+                <xsd:group ref="CrudGroup"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="doSelectManyRequest" type="CrudParamType"/>
+    <xsd:element name="doSelectManyResponse" type="CrudManyType"/>
+    <xsd:element name="doSelectManyAsAttachmentRequest" type="CrudParamType"/>
+    <xsd:element name="crudAtt" nillable="true" type="fswsAttachment"/>
+</xsd:schema>

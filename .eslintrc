@@ -1,0 +1,45 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+    "node": true
+  },
+  "rules": {
+    "curly": [2, "multi-line"],
+    "semi": [2, "never"],
+    "strict": [2, "never"],
+    "eqeqeq": [2, "smart"],
+    "quotes": [1, "single"],
+    "key-spacing": [2, {"align": "value"}],
+    "semi": [1, "never"],
+    "no-multi-spaces": 0,
+    "no-alert": 0,
+    "no-underscore-dangle": 0,
+    "new-cap": [0, {
+      "capIsNewExceptions": [
+        "Array",
+        "Boolean",
+        "Date",
+        "Error",
+        "Function",
+        "Number",
+        "Object",
+        "RegExp",
+        "String",
+        "Symbol",
+        "Ember",
+        "A"
+      ]
+    }],
+    "no-undef": 2,
+    "no-unused-vars": [1, {"vars": "all", "args": "after-used"}],
+    "one-var": [2, {
+      "uninitialized": "always",
+      "initialized": "never"
+    }],
+    "func-names": 0,
+    "key-spacing": 0
+  },
+  "globals": {
+
+  }
+}

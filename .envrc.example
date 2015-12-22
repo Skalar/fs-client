@@ -1,0 +1,9 @@
+# Test environment
+export FS_CRUD_URL=https://jboss-test.uio.no/fsrest/rest/crud
+
+# Production environment
+# export FS_CRUD_URL=https://fsws.usit.no/fsrest/rest/crud
+
+# Same credentials for test and production
+export FS_USERNAME=user
+export FS_PASSWORD=pass
