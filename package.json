@@ -2,7 +2,7 @@
   "name": "fs-import",
   "version": "1.0.0",
   "description": "FS import",
-  "main": "index.js",
+  "main": "lib/fs.js",
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
