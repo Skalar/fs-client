@@ -46,7 +46,15 @@ function customQuery() {
     .catch(err => console.log(err))
 }
 
+// Example to get course
+function findCourse() {
+  crud.course.findAll()
+    .then(courses => console.log(courses))
+    .catch(err => console.log(err))
+}
+
+findCourse()
 // customQuery()
 // stalker()
 // findPersonBySSN(process.argv[2])
-findApplicationsAndPopulateWithPerson(process.argv[2])
+// findApplicationsAndPopulateWithPerson(process.argv[2])
