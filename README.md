@@ -1,4 +1,6 @@
-# FS import
+# Felles Studentsystem (FS) client
+
+Documentation: http://www.fellesstudentsystem.no/dokumentasjon/
 
 ## Examples
 
