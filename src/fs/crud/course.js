@@ -4,7 +4,7 @@ import { getAttribute } from '../helpers'
 function serialize(course) {
 
   return {
-    year:                       '2016',
+    year:                       new Date().getFullYear(),
     name:                       getAttribute(course, 'Studieprognavn'),
     courseTypeId:               getAttribute(course, 'Studieprogramkode'),
     courseCode:                 null,
