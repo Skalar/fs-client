@@ -1,33 +1,34 @@
-import { crud } from './lib/fs'
+import { crud } from './src/fs'
 
 function findApplicationsAndPopulateWithPerson(year='2016') {
-  function mergeWithPeople(applications, people) {
-    applications.forEach(application => {
-      application.person = people.find(person => person.ssn === application.ssn)
+  function mergeWithPeople(applicationAlternatives, people) {
+    applicationAlternatives.forEach(applicationAlternative => {
+      applicationAlternative.person = people.find(person =>
+        person.getSSN() === applicationAlternative.getSSN())
     })
 
-    return Promise.resolve(applications)
+    return Promise.resolve(applicationAlternatives)
   }
 
-  function findPeople(applications) {
+  function findPeople(applicationAlternatives) {
     var people = []
 
-    applications.forEach(application => {
-      people.push(crud.person.find(application.ssn))
+    applicationAlternatives.forEach(applicationAlternative => {
+      people.push(crud.person.findBySSN(applicationAlternative.getSSN()))
     })
 
     return Promise.all(people)
-      .then(people => mergeWithPeople(applications, people))
+      .then(people => mergeWithPeople(applicationAlternatives, people))
   }
 
-  crud.application.findAll(year)
-    .then(applications => findPeople(applications))
+  crud.soknadsAlternativ.findByYear(year)
+    .then(applicationAlternatives => findPeople(applicationAlternatives))
     .then(result => console.log(result))
     .catch(error => console.error(`Oops: ${error}`))
 }
 
-function findPersonBySSN(ssn) {
-  crud.person.find(process.argv[2])
+function findPersonBySSN(ssn=process.argv[2]) {
+  crud.person.findBySSN(ssn)
     .then(person => console.log(person))
     .catch(error => console.log(`Oops: ${error}`))
 }
@@ -46,15 +47,7 @@ function customQuery() {
     .catch(err => console.log(err))
 }
 
-// Example to get course
-function findCourse() {
-  crud.course.findAll()
-    .then(courses => console.log(courses))
-    .catch(err => console.log(err))
-}
-
-findCourse()
 // customQuery()
 // stalker()
 // findPersonBySSN(process.argv[2])
-// findApplicationsAndPopulateWithPerson(process.argv[2])
+findApplicationsAndPopulateWithPerson(process.argv[2])
