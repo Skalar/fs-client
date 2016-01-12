@@ -38,12 +38,12 @@ function extractResult(model, data) {
 }
 
 // Convert XML to JSON
-function xmlToJson(model, data, serialize=raw) {
+function xmlToJson(model, data, decorator={}) {
   return xmlParser(data)
     .then(result => extractResult(model, result))
     .then(result => {
-      if (Array.isArray(result)) return result.map(obj => serialize(obj))
-      else return serialize(result)
+      if (Array.isArray(result)) return result.map(obj => Object.assign(raw(obj), decorator))
+      else return Object.assign(raw(result), decorator)
     })
 }
 

@@ -1,26 +1,23 @@
 import { selectOne, selectMany } from './request'
-import { toSSN, getAttribute, pad } from '../helpers'
+import { toSSN, getAttribute } from '../helpers'
 
-function serialize(person) {
-  return {
-    ssn:         toSSN(person.Fodselsdato[0], person.Personnr[0]),
-    name:        getAttribute(person, ['Fornavn', 'Etternavn']),
-    email:       getAttribute(person, 'Emailadresse_Privat') || getAttribute(person, 'Emailadresse'),
-    gender:      getAttribute(person, 'Kjonn') === 'M' ? 'male' : 'female',
-    username:    getAttribute(person, 'Brukernavn'),
-    address:     getAttribute(person, ['Adrlin1_Hjemsted', 'Adrlin2_Hjemsted', 'Adrlin3_Hjemsted']),
-    postalCode:  pad(getAttribute(person, 'Postnr_Hjemsted'), 4),
-    countryCode: getAttribute(person, 'Terminkode')
+let decorator = {
+  getSSN() {
+    return toSSN(getAttribute(this, 'Fodselsdato'), getAttribute(this, 'Personnr'))
   }
 }
 
-function findAll(filter) {
-  return selectMany('Person', filter, serialize)
+function findAll(query={}) {
+  return selectMany('Person', query, decorator)
 }
 
-function find(ssn) {
+function findOne(query={}) {
+  return selectOne('Person', query, decorator)
+}
+
+function findBySSN(ssn) {
   var [birthdate, suffix] = ssn.match(/.{1,6}/g)
-  return selectOne('Person', { Fodselsdato: birthdate, Personnr: suffix }, serialize)
+  return findOne({ Fodselsdato: birthdate, Personnr: suffix })
 }
 
-export { find, findAll }
+export { findBySSN, findAll, findOne }
