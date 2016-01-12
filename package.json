@@ -1,7 +1,7 @@
 {
-  "name": "fs-import",
+  "name": "@westerdals/fs-client",
   "version": "0.0.2",
-  "description": "Westerdals FS import",
+  "description": "Felles Studentsystem (FS) API client",
   "main": "lib/fs.js",
   "private": true,
   "scripts": {
@@ -11,11 +11,6 @@
   },
   "engines": {
     "node": "5.3.0"
-  },
-  "babel": {
-    "presets": [
-      "es2015"
-    ]
   },
   "author": "Gudleik Rasch <gr@skalar.no>",
   "license": "ISC",
