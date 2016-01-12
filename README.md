@@ -2,6 +2,8 @@
 
 Documentation: http://www.fellesstudentsystem.no/dokumentasjon/
 
+[ ![Codeship Status for Skalar/fs-client](https://codeship.com/projects/78ffc700-9b64-0133-f631-66e8ff02f31d/status?branch=master)](https://codeship.com/projects/126761)
+
 ## Examples
 
 ```javascript
