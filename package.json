@@ -3,7 +3,6 @@
   "version": "0.0.2",
   "description": "Felles Studentsystem (FS) API client",
   "main": "lib/fs.js",
-  "private": true,
   "scripts": {
     "compile": "babel -d lib/ src/",
     "prepublish": "npm run compile",
