@@ -12,11 +12,6 @@
   "engines": {
     "node": "5.3.0"
   },
-  "babel": {
-    "presets": [
-      "es2015"
-    ]
-  },
   "author": "Gudleik Rasch <gr@skalar.no>",
   "license": "ISC",
   "dependencies": {
