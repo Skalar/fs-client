@@ -1,9 +1,9 @@
 import { selectMany } from './request'
-import { getAttribute, toSSN } from '../helpers'
+import { toSSN } from '../helpers'
 
 let decorator = {
   getSSN() {
-    return toSSN(getAttribute(this, 'Fodselsdato'), getAttribute(this, 'Personnr'))
+    return toSSN(this.Fodselsdato, this.Personnr)
   }
 }
 
