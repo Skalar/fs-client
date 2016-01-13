@@ -1,14 +1,13 @@
-import { selectMany } from './request'
-import { toSSN } from '../helpers'
+import Base from './base'
 
-let decorator = {
-  getSSN() {
-    return toSSN(this.Fodselsdato, this.Personnr)
+export default class Soknad extends Base {
+  static format(data) {
+    // Add ssn attribute
+    data.ssn = data.Fodselsdato + data.Personnr
+    return data
+  }
+
+  static findByYear(year = new Date().getFullYear()) {
+    return this.find({ Arstall: year })
   }
 }
-
-function findAll(query={}) {
-  return selectMany('Soknad', query, decorator)
-}
-
-export { findAll }

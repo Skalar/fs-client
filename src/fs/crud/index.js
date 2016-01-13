@@ -1,12 +1,11 @@
-import * as person from './person'
-import * as soknad from './soknad'
-import * as soknadsAlternativ from './soknadsalternativ'
-import { selectOne, selectMany } from './request'
+import Person from './person'
+import Soknad from './soknad'
+import SoknadsAlternativ from './soknadsalternativ'
+import { selectMany } from './query'
 
 export default {
-  person,
-  soknad,
-  soknadsAlternativ,
-  selectOne,
+  Person,
+  Soknad,
+  SoknadsAlternativ,
   selectMany
 }

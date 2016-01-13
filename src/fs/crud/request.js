@@ -1,15 +1,28 @@
 import Promise from 'bluebird'
-import requestOriginal from 'request'
-import { raw, xmlToJson } from '../helpers'
+import _request from 'request'
+const request = Promise.promisify(_request)
 
-const SELECT      = 'select'
-const SELECT_MANY = 'selectMany'
-const request     = Promise.promisify(requestOriginal)
+// Mapping of request types
+// key    => will be used as part of the URL
+// value  => will be used in the XML
+const requestTypes = {
+  upsert:     'doUpsertRequest',
+  select:     'doSelectRequest',
+  selectMany: 'doSelectManyRequest'
+}
 
-// Low-level fs request function
-function fsRequest(requestType, xml) {
-  var tag  = 'do' + requestType.charAt(0).toUpperCase() + requestType.slice(1) + 'Request'
-  var body = `<${tag} xmlns="http://fsws.usit.no/schemas/crud">${xml}</${tag}>`
+/**
+ * request - Perform a request against
+ *
+ * @param  {type} requestType description
+ * @param  {type} xml         description
+ * @return {type}             description
+ */
+export default function(requestType, xml) {
+  const tag = requestTypes[requestType]
+  if (!tag) return Promise.reject('Invalid request type')
+
+  const body = `<${tag} xmlns="http://fsws.usit.no/schemas/crud">${xml}</${tag}>`
 
   return request({
     url:    `${process.env.FS_CRUD_URL}/${requestType}`,
@@ -23,39 +36,3 @@ function fsRequest(requestType, xml) {
     }
   })
 }
-
-// Returns query XML
-// Example: queryBuilder("Soknad", { Arstall: 2015}))
-// => "<Soknad><Arstall>2015</Arstall></Soknad>"
-function queryBuilder(table, filter) {
-  var query = []
-  for (let key in filter) query.push(`<${key}>${filter[key]}</${key}>`)
-  return `<${table}>${query}</${table}>`
-}
-
-function select(requestType, table, filter, parser) {
-  return new Promise((resolve, reject) => {
-    var xml = queryBuilder(table, filter)
-    fsRequest(requestType, xml)
-      .then(response => {
-        if (response.statusCode === 200) resolve(xmlToJson(table, response.body, parser))
-        else reject('Server error')
-      })
-  })
-}
-
-function selectOne(table, filter, parser=raw) {
-  return select(SELECT, table, filter, parser)
-}
-
-function selectMany(table, filter, parser=raw) {
-  return select(SELECT_MANY, table, filter, parser)
-}
-
-// Not yet implemented
-// function upsert(/*table, filter*/) {
-//   throw('Not yet implemented')
-//   // return fsRequest('doUpsertRequest', xml)
-// }
-
-export { selectOne, selectMany }
