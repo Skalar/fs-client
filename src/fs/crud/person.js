@@ -1,23 +1,15 @@
-import { selectOne, selectMany } from './request'
-import { toSSN } from '../helpers'
+import Base from './base'
 
-let decorator = {
-  getSSN() {
-    return toSSN(this.Fodselsdato, this.Personnr)
+export default class Person extends Base {
+  static format(data) {
+    // Add ssn and name attributes
+    data.ssn  = data.Fodselsdato + data.Personnr
+    data.name = [data.Fornavn, data.Etternavn].join(' ')
+    return data
+  }
+
+  static findBySSN(ssn) {
+    const [birthdate, suffix] = ssn.match(/.{1,6}/g)
+    return this.find({ Fodselsdato: birthdate, Personnr: suffix })
   }
 }
-
-function findAll(query={}) {
-  return selectMany('Person', query, decorator)
-}
-
-function findOne(query={}) {
-  return selectOne('Person', query, decorator)
-}
-
-function findBySSN(ssn) {
-  var [birthdate, suffix] = ssn.match(/.{1,6}/g)
-  return findOne({ Fodselsdato: birthdate, Personnr: suffix })
-}
-
-export { findBySSN, findAll, findOne }
