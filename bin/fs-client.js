@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-import crud from '../lib/fs/crud'
+var crud = require('../lib/fs/crud').default
 
-const table = process.argv[2]
-const query = process.argv[3]
-let filter  = {}
+var table = process.argv[2]
+var query = process.argv[3]
+var filter  = {}
 
 if (query) {
-  query.split(',').forEach(condition => {
-    let [key,value] = condition.split('=')
-    filter[key] = value
+  query.split(',').forEach(function(condition) {
+    var kv = condition.split('=')
+    filter[kv[0]] = kv[1]
   })
 }
 
