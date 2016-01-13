@@ -4,10 +4,13 @@
   "description": "Felles Studentsystem (FS) API client",
   "main": "lib/fs.js",
   "scripts": {
-    "compile": "rm -fr lib && babel -d lib/ src/",
+    "compile": "rm -fr lib bin && babel --ignore src/bin -d lib/ src/ && babel -d bin/ src/bin/",
     "prepublish": "npm run compile",
     "test": "NODE_ENV=test node_modules/.bin/babel-node node_modules/.bin/tape \"./test/**/*.test.js\"",
     "watch": "nodemon -q -x 'npm test'"
+  },
+  "bin": {
+    "fs-client": "bin/fs-client.js"
   },
   "engines": {
     "node": "5.3.0"
