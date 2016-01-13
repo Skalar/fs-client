@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { crud } from '../lib/fs/crud'
+import crud from '../lib/fs/crud'
 
 const table = process.argv[2]
 const query = process.argv[3]
