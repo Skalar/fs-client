@@ -55,3 +55,15 @@ test('it finds people', assert => {
       assert.equal(result[0].ssn, '13098834758')
     })
 })
+
+test('find uses correct query', assert => {
+  nock.cleanAll()
+  nock(process.env.FS_CRUD_URL)
+    .post('/selectMany', body => {
+      assert.deepEqual({ xml: '<doSelectManyRequest xmlns="http://fsws.usit.no/schemas/crud"><Person><Kjonn>K</Kjonn></Person></doSelectManyRequest>' }, body)
+      return true
+    })
+    .reply(200, '<SomeXmlData></SomeXmlData>')
+
+  return Person.find({Kjonn: 'K'})
+})
