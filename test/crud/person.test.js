@@ -21,6 +21,8 @@ test('it finds people', assert => {
                     <Emailadresse/>
                     <Status_Dod/>
                     <Brukernavn/>
+                    <Telefonnr_Mobil>98765432</Telefonnr_Mobil>
+                    <Telefonnr_Hjemsted>28765432</Telefonnr_Hjemsted>
                   </Person>
                   <Person>
                     <Fodselsdato>130988</Fodselsdato>
@@ -39,6 +41,8 @@ test('it finds people', assert => {
                     <Emailadresse>sormar13@student.westerdals.no</Emailadresse>
                     <Status_Dod/>
                     <Brukernavn>sormar13</Brukernavn>
+                    <Telefonnr_Mobil/>
+                    <Telefonnr_Hjemsted>12345678</Telefonnr_Hjemsted>
                   </Person>
               </doSelectManyResponse>`
 
@@ -50,9 +54,15 @@ test('it finds people', assert => {
   return Person.find({Fodselsdato: 130988})
     .then(result => {
       assert.equal(result.length, 2)
-      assert.equal(result[0].name, 'Fredrik Lindtun')
-      assert.equal(result[0].Fodselsdato, '130988')
-      assert.equal(result[0].ssn, '13098834758')
+      assert.equal(result[0].address, null)
+      assert.equal(result[0].phone, '98765432')
+
+      assert.equal(result[1].name, 'Martin Nikolai Sørlie')
+      assert.equal(result[1].Fodselsdato, '130988')
+      assert.equal(result[1].ssn, '13098828383')
+      assert.equal(result[1].email, 'martz@outlook.com')
+      assert.equal(result[1].phone, '12345678')
+      assert.equal(result[1].address, 'Stangevegen 862, 2335 STANGE')
     })
 })
 
