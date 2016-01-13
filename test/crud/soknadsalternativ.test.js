@@ -2,7 +2,7 @@ import test from 'blue-tape'
 import nock from 'nock'
 import SoknadsAlternativ from '../../src/fs/crud/soknadsalternativ'
 
-test('findMany with results', assert => {
+test('find returns JSON data', assert => {
   const xml = `<doSelectManyResponse xmlns="http://fsws.usit.no/schemas/crud">
                 <SoknadsAlternativ><Fodselsdato>30988</Fodselsdato><Personnr>21133</Personnr><Opptakstypekode>MASTER</Opptakstypekode><Terminkode>HØST</Terminkode><Arstall>2015</Arstall><Institusjonsnr>1655</Institusjonsnr><Studietypenr>3100</Studietypenr><Prioritetsnr>2</Prioritetsnr><Opptorgankode_Saksbeh>WOACT</Opptorgankode_Saksbeh><Opptorgankode_Tilbudsgiver>WOACT</Opptorgankode_Tilbudsgiver></SoknadsAlternativ>
                 <SoknadsAlternativ><Fodselsdato>130988</Fodselsdato><Personnr>21133</Personnr><Opptakstypekode>MASTER</Opptakstypekode><Terminkode>HØST</Terminkode><Arstall>2015</Arstall><Institusjonsnr>1655</Institusjonsnr><Studietypenr>3110</Studietypenr><Prioritetsnr>1</Prioritetsnr><Opptorgankode_Saksbeh>WOACT</Opptorgankode_Saksbeh><Opptorgankode_Tilbudsgiver>WOACT</Opptorgankode_Tilbudsgiver></SoknadsAlternativ>
@@ -22,7 +22,7 @@ test('findMany with results', assert => {
     })
 })
 
-test('findMany with no results', assert => {
+test('find returning no results', assert => {
   const xml = '<doSelectManyResponse xmlns="http://fsws.usit.no/schemas/crud"></doSelectManyResponse>'
   nock.cleanAll()
   nock(process.env.FS_CRUD_URL)
@@ -33,7 +33,7 @@ test('findMany with no results', assert => {
     .then(result => assert.equal(0, result.length))
 })
 
-test('findMany returning error', assert => {
+test('find when server returns error', assert => {
   nock.cleanAll()
   nock(process.env.FS_CRUD_URL)
     .post('/selectMany')
@@ -43,7 +43,7 @@ test('findMany returning error', assert => {
     .catch(error => assert.equal('Invalid query', error))
 })
 
-test('findByYear', assert => {
+test('findByYear filters by year', assert => {
   nock.cleanAll()
   nock(process.env.FS_CRUD_URL)
     .post('/selectMany', body => {

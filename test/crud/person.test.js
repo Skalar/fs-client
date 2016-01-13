@@ -2,7 +2,7 @@ import test from 'blue-tape'
 import nock from 'nock'
 import Person from '../../src/fs/crud/person'
 
-test('findMany with results', assert => {
+test('it finds people', assert => {
   const xml = `<doSelectManyResponse xmlns="http://fsws.usit.no/schemas/crud">
                 <Person>
                     <Fodselsdato>130988</Fodselsdato>
