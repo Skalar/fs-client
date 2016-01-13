@@ -46,7 +46,7 @@ function xmlToJSON(data) {
   return xmlParser(data, { trim: true, explicitArray: false, explicitRoot: false, validator: validator})
     .then(data => {
       for (let key in data) {
-        if (key !== '$') return data[key]
+        if (key !== '$') return Array.isArray(data[key]) ? data[key] : [data[key]]
       }
       return []
     })
