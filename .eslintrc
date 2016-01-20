@@ -35,8 +35,7 @@
       "uninitialized": "always",
       "initialized": "never"
     }],
-    "func-names": 0,
-    "key-spacing": 0
+    "func-names": 0
   },
   "globals": {
 
