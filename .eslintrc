@@ -5,7 +5,6 @@
   },
   "rules": {
     "curly": [2, "multi-line"],
-    "semi": [2, "never"],
     "strict": [2, "never"],
     "eqeqeq": [2, "smart"],
     "quotes": [1, "single"],
