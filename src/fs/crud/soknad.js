@@ -1,10 +1,11 @@
 import Base from './base'
 
 export default class Soknad extends Base {
-  static format(data) {
+  constructor(data) {
+    super(data)
+
     // Add ssn attribute
-    data.ssn = data.Fodselsdato + data.Personnr
-    return data
+    this.ssn = data.Fodselsdato + data.Personnr
   }
 
   static findByYear(year = new Date().getFullYear()) {

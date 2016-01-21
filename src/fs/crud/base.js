@@ -2,16 +2,16 @@ import { selectMany } from './query'
 
 class Base {
 
-  static find(filter) {
-    // this.name = classname
-    return selectMany(this.name, filter)
-      .then(result => result.map(data => this.format(data)))
+  // To customize the result from find, you can override this method
+  constructor(data) {
+    Object.assign(this, data)
   }
 
-  // To customize the result from find, you can override this method
-  static format(data) {
-    return data
+  static find(filter) {
+    return selectMany(this.name, filter)
+      .then(result => result.map(data => new this(data)))
   }
+
 }
 
 export default Base
