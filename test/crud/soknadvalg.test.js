@@ -1,6 +1,6 @@
 import test from 'blue-tape'
 import nock from 'nock'
-import Soknadvalg from '../../src/fs/crud/soknad'
+import Soknadvalg from '../../src/fs/crud/soknadvalg'
 
 test('find should find a Soknadvalg', assert => {
   const xml = `<doSelectManyResponse xmlns="http://fsws.usit.no/schemas/crud">
@@ -25,4 +25,16 @@ test('find should find a Soknadvalg', assert => {
     .then(result => {
       assert.equal(result[0].Studieprogramvalgkode, 'VOKAL')
     })
+})
+
+test('find uses correct query', assert => {
+  nock.cleanAll()
+  nock(process.env.FS_CRUD_URL)
+    .post('/selectMany', body => {
+      assert.deepEqual({ xml: '<doSelectManyRequest xmlns="http://fsws.usit.no/schemas/crud"><Soknadvalg><Personnr>12345</Personnr></Soknadvalg></doSelectManyRequest>' }, body)
+      return true
+    })
+    .reply(200, '<SomeXmlData></SomeXmlData>')
+
+  return Soknadvalg.find({Personnr: '12345'})
 })
