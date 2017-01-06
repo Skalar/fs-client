@@ -1,0 +1,49 @@
+{
+  "name": "fs-client",
+  "version": "0.1.0",
+  "description": "Felles Studentsystem (FS) API client",
+  "main": "lib/fs.js",
+  "scripts": {
+    "compile": "rm -fr lib && babel -d lib/ src/",
+    "prepublish": "npm run compile",
+    "lint": "eslint src test",
+    "test": "NODE_ENV=test babel-node node_modules/.bin/blue-tape \"./test/**/*.test.js\" | tap-spec",
+    "ci-test": "npm run lint && npm test",
+    "watch": "nodemon -q -x 'npm test'"
+  },
+  "bin": {
+    "fs-client": "bin/fs-client.js"
+  },
+  "engines": {
+    "node": "7.4.0"
+  },
+  "author": "Gudleik Rasch <gr@skalar.no>",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.4.7",
+    "request": "^2.79.0",
+    "xml2js": "^0.4.17"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-eslint": "^7.1.1",
+    "babel-preset-es2015": "^6.18.0",
+    "blue-tape": "^1.0.0",
+    "eslint": "^3.12",
+    "eslint-config-skalar": "^0.0.7",
+    "nock": "^9.0.2",
+    "nodemon": "^1.11.0",
+    "tap-spec": "^4.1.1"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "extends": [
+      "skalar"
+    ]
+  }
+}
