@@ -15,7 +15,7 @@
     "fs-client": "bin/fs-client.js"
   },
   "engines": {
-    "node": "7.4.0"
+    "node": ">= 5.9.0"
   },
   "author": "Gudleik Rasch <gr@skalar.no>",
   "license": "ISC",
