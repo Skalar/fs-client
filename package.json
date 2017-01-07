@@ -1,6 +1,6 @@
 {
   "name": "fs-client",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Felles Studentsystem (FS) API client",
   "main": "lib/fs.js",
   "scripts": {
